@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kosova — Klima</title>
+<style>
+:root{--bg:#fff3d6;--ink:#111;--acc:#ff4f8b;--blue:#2d6bff;--yel:#ffd23f;--grn:#2ee59d;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:"Space Grotesk","Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);background-image:radial-gradient(#11111122 1.2px,transparent 1.2px);background-size:18px 18px}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+h1,h2,h3,.num,.logo{font-family:"Archivo Black",Impact,"Arial Black",sans-serif;font-weight:900;text-transform:uppercase}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tb{height:52px;flex:0 0 52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:3px solid var(--ink);background:var(--yel)}
+.logo{font-size:18px}.logo span{background:var(--ink);color:var(--yel);padding:1px 7px;margin-left:4px}
+.chip{padding:3px 10px;border:3px solid var(--ink);background:#fff;font-weight:800;font-size:13px;box-shadow:3px 3px 0 var(--ink)}
+.pips{display:flex;gap:4px;padding:10px 16px 0}.pip{flex:1;height:8px;border:2px solid var(--ink);background:#fff}.pip.on{background:var(--acc)}
+.screens{position:relative;flex:1;min-height:0}
+.scr{position:absolute;inset:0;overflow:auto;padding:14px clamp(16px,5vw,64px);display:flex;opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .25s,transform .25s,visibility 0s .25s}
+.scr.active{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.wrap{width:min(1000px,100%);margin:auto;padding:6px 0 16px}.c{text-align:center}
+h1{font-size:clamp(52px,13vw,128px);line-height:.88;margin:10px 0;-webkit-text-stroke:3px var(--ink);color:#fff;text-shadow:6px 6px 0 var(--ink)}
+h1 span{color:var(--acc)}
+h2{font-size:clamp(26px,4.6vw,48px);line-height:1.02;margin-bottom:8px}
+h2::after{content:"";display:block;width:90px;height:8px;margin-top:10px;background:var(--blue);border:2px solid var(--ink)}.c h2::after{margin-inline:auto}
+h3{font-size:15px;margin-bottom:4px}
+.k{display:inline-block;font-size:12px;font-weight:800;background:var(--ink);color:var(--yel);padding:3px 9px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;transform:rotate(-2deg)}
+.sub{line-height:1.55;font-size:16px;max-width:700px;margin:8px 0;font-weight:500}.c .sub{margin-inline:auto}
+.panel,.card,.q{background:#fff;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.panel{margin-top:16px;padding:14px 16px;font-size:15px;line-height:1.55;min-height:74px;background:var(--grn)}.panel b{background:var(--ink);color:#fff;padding:0 5px}
+.btn{display:inline-block;margin-top:22px;padding:14px 28px;font-weight:900;text-transform:uppercase;background:var(--acc);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transition:.12s}
+.btn:active,.nb:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--ink)}
+.grid{display:grid;gap:14px;margin-top:14px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{padding:14px;text-align:left;transition:.12s}.card:nth-child(4n+1){background:#ffe58a}.card:nth-child(4n+2){background:#b9d0ff}.card:nth-child(4n+3){background:#ffc2d8}.card:nth-child(4n+4){background:#aef5d4}
+.card:hover,.card.sel{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--ink)}.card.sel{outline:4px solid var(--ink);outline-offset:-10px}
+.card .ic{font-size:30px;display:block;margin-bottom:4px}.card p{font-size:13px;line-height:1.4;font-weight:600}
+.lbl{font-size:12px;font-weight:700}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.tab{padding:8px 14px;border:3px solid var(--ink);background:#fff;font-weight:800;font-size:13px;box-shadow:3px 3px 0 var(--ink)}.tab.on{background:var(--ink);color:var(--yel)}
+.bars{display:flex;gap:5px;align-items:flex-end;height:200px;margin-top:12px;padding:10px;border:3px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--ink)}
+.bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:10px;font-weight:800}
+.bar div{width:100%;border:2px solid var(--ink);min-height:4px;transition:height .3s}.bar.on div{box-shadow:inset 0 0 0 3px #fff}.bar.on{color:var(--acc)}.bar span{font-size:11px}
+input[type=range]{width:100%;accent-color:var(--acc);margin:14px 0;height:28px}
+.sky{height:210px;position:relative;overflow:hidden;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transition:background .3s}
+.sky svg{position:absolute;inset:0;width:100%;height:100%}
+.lvl{position:absolute;left:0;right:0;height:4px;background:var(--ink)}.lvl span{position:absolute;right:8px;top:-30px;font-weight:900;font-size:14px;background:var(--yel);border:3px solid var(--ink);padding:0 7px}
+.q{padding:20px;max-width:640px;margin:14px auto 0;text-align:left}
+.qq{font-size:19px;font-weight:800;margin-bottom:12px}
+.qo{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:9px;border:3px solid var(--ink);background:#fff;font-weight:700;font-size:15px;box-shadow:3px 3px 0 var(--ink)}
+.qo:hover:not(:disabled){background:var(--yel)}.qo.ok{background:var(--grn)}.qo.ng{background:#ff8fa8}
+.nav{height:62px;flex:0 0 62px;display:flex;align-items:center;justify-content:center;gap:14px;border-top:3px solid var(--ink);background:var(--blue)}
+.nb{width:46px;height:42px;border:3px solid var(--ink);background:#fff;font-size:20px;font-weight:900;box-shadow:4px 4px 0 var(--ink)}
+.nh{font-weight:900;color:#fff;min-width:50px;text-align:center}
+@media(max-width:760px){.g4,.g3{grid-template-columns:repeat(2,1fr)}.g3.one{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="tb"><div class="logo">Kosova <span>klima</span></div><div class="chip" id="cnt">1 / 7</div></div>
+<div class="pips" id="pips"></div>
+<div class="screens">
+
+<section class="scr active" id="s1"><div class="wrap c">
+<div style="font-size:60px">🌦️</div>
+<h1>KOSOVA<br><span>klima</span></h1>
+<p class="sub">Katër stinë, tri tipe klime dhe një relief që ndryshon gjithçka: temperaturat, reshjet dhe dëborën. Një udhëtim interaktiv.</p>
+<button class="btn" onclick="next()">Fillo →</button>
+</div></section>
+
+<section class="scr" id="s2"><div class="wrap">
+<div class="k">Tipet e klimës</div><h2>Tri klima në një vend të vogël</h2>
+<p class="sub">Kosova është kryesisht kontinentale, por pozita dhe lartësia e ndryshojnë klimën nga zona në zonë. Kliko një zonë.</p>
+<div class="grid g3 one" id="zones"></div>
+<div class="panel" id="zout"></div>
+</div></section>
+
+<section class="scr" id="s3"><div class="wrap">
+<div class="k">Faktorët</div><h2>Çfarë e formon klimën?</h2>
+<div class="grid g4" id="facs"></div>
+<div class="panel" id="fout"></div>
+</div></section>
+
+<section class="scr" id="s4"><div class="wrap">
+<div class="k">Rrjedha vjetore</div><h2>Një vit në Prishtinë</h2>
+<div class="tabs"><button class="tab on" data-m="t">🌡️ Temperatura</button><button class="tab" data-m="p">🌧️ Reshjet</button></div>
+<div class="bars" id="bars"></div>
+<div class="panel" id="mout"></div>
+</div></section>
+
+<section class="scr" id="s5"><div class="wrap">
+<div class="k">Lartësia</div><h2>Sa ftohtë bëhet në mal?</h2>
+<p class="sub">Temperatura bie rreth 0,6°C për çdo 100 m. Lëviz rrëshqitësin nga lugina deri te Gjeravica.</p>
+<div class="sky" id="sky"><svg viewBox="0 0 400 200" preserveAspectRatio="none"><path d="M0 200V140L60 120 110 150 170 70 220 110 290 20 350 90 400 60V200Z" fill="#111"/><path d="M270 40L290 20 312 50 298 44 290 56 280 44Z" fill="#fff" stroke="#111" stroke-width="2"/></svg><div class="lvl" id="lvl"><span id="lvv"></span></div></div>
+<input type="range" id="alt" min="300" max="2650" value="600" step="10" aria-label="Lartësia">
+<div class="panel" id="aout"></div>
+</div></section>
+
+<section class="scr" id="s6"><div class="wrap">
+<div class="k">Ndikimi</div><h2>Klima në jetën e përditshme</h2>
+<div class="grid g4" id="imp"></div>
+<div class="panel" id="iout"></div>
+</div></section>
+
+<section class="scr" id="s7"><div class="wrap c">
+<div class="k">Kuizi</div><h2>Sa mirë e njeh klimën?</h2>
+<div class="q"><div class="lbl" id="qn"></div><div class="qq" id="qq"></div><div id="qo"></div><div id="qf" style="font-weight:700;min-height:22px"></div></div>
+</div></section>
+
+</div>
+<div class="nav"><button class="nb" onclick="prev()" aria-label="Mbrapa">←</button><div class="nh" id="nh">1</div><button class="nb" onclick="next()" aria-label="Para">→</button></div>
+</div>
+<script>
+"use strict";
+const T=7;let cur=1;const $=id=>document.getElementById(id);
+const pe=$("pips");for(let i=0;i<T;i++){const d=document.createElement("div");d.className="pip";pe.appendChild(d)}
+function ui(){$("cnt").textContent=cur+" / "+T;$("nh").textContent=cur;document.querySelectorAll(".pip").forEach((d,i)=>d.classList.toggle("on",i<cur))}
+function go(n){n=Math.max(1,Math.min(T,n));if(n===cur)return;$("s"+cur).classList.remove("active");$("s"+n).classList.add("active");cur=n;ui();if(n===7&&!qs)quiz()}
+function next(){go(cur<T?cur+1:1)}function prev(){go(cur>1?cur-1:T)}
+addEventListener("keydown",e=>{if(e.target.tagName==="INPUT")return;if(["ArrowRight","ArrowDown"].includes(e.key)){e.preventDefault();next()}if(["ArrowLeft","ArrowUp"].includes(e.key)){e.preventDefault();prev()}});
+ui();
+function pick(sel,i,b){document.querySelectorAll(sel).forEach(c=>c.classList.remove("sel"));b.classList.add("sel")}
+
+/* s2 zones */
+const Z=[["🌾","Kontinentale","Rrafshi i Kosovës","Tipi mbizotërues. Verë e ngrohtë, dimër i ftohtë me dëborë, temperaturë mesatare vjetore rreth 10°C. Reshje rreth 600–700 mm në vit."],
+["🌿","Me ndikim mesdhetar","Rrafshi i Dukagjinit","Hapur nga lugina e Drinit të Bardhë, ku depërtojnë ajri më i butë nga Adriatiku. Dimra pak më të butë, verë më e ngrohtë dhe sezon më i gjatë bujqësor."],
+["🏔️","Alpine","Bjeshkët e Nemura dhe Sharri","Mbi 1.500–2.000 m: verë e freskët, dimër i gjatë, dëborë për disa muaj dhe reshje më të bollshme se në rrafshe."]];
+$("zones").innerHTML=Z.map((z,i)=>`<button class="card" onclick="zz(${i},this)"><span class="ic">${z[0]}</span><h3>${z[1]}</h3><p>${z[2]}</p></button>`).join("");
+function zz(i,b){pick("#zones .card",i,b);$("zout").innerHTML="<b>"+Z[i][1]+":</b> "+Z[i][3]}
+zz(0,$("zones").children[0]);
+
+/* s3 factors */
+const F=[["📍","Pozita","Kosova është në brendësi të Ballkanit, larg detit, prandaj ndikimi kontinental është i fortë."],["⛰️","Reliev","Malet rrethojnë rrafshet dhe e ndalojnë një pjesë të ajrit të lagësht, sidomos nga perëndimi."],["🌊","Ajri nga Adriatiku","Hyn kryesisht përmes luginës së Drinit të Bardhë dhe e zbut klimën në perëndim."],["📏","Lartësia","Sa më lart, aq më ftohtë dhe me më shumë reshje e dëborë."]];
+$("facs").innerHTML=F.map((f,i)=>`<button class="card" onclick="ff(${i},this)"><span class="ic">${f[0]}</span><h3>${f[1]}</h3></button>`).join("");
+function ff(i,b){pick("#facs .card",i,b);$("fout").innerHTML="<b>"+F[i][1]+":</b> "+F[i][2]}
+ff(0,$("facs").children[0]);
+
+/* s4 year chart */
+const M=["Jan","Shk","Mar","Pri","Maj","Qer","Kor","Gus","Sht","Tet","Nën","Dhj"],TT=[-1,1,5,10,15,19,21,21,16,11,5,0],PP=[40,37,43,50,63,65,45,40,40,50,60,55];
+let mode="t",mi=0;
+function draw(){const t=mode==="t";$("bars").innerHTML=M.map((m,i)=>{const v=t?TT[i]:PP[i];const h=t?(TT[i]+5)*5+10:PP[i]*2.2;const c=t?(TT[i]<5?"#2d6bff":TT[i]<16?"#2ee59d":"#ffd23f"):"#2d6bff";return`<button class="bar${i===mi?" on":""}" onclick="cm(${i})"><span>${v}${t?"°":""}</span><div style="height:${h}px;background:${c}"></div>${m}</button>`}).join("");info()}
+function info(){const i=mi;$("mout").innerHTML="<b>"+M[i]+":</b> rreth "+TT[i]+"°C mesatarisht dhe rreth "+PP[i]+" mm reshje (vlera të përafërta). "+(TT[i]<3?"Dimër i ftohtë, me dëborë, sidomos në male.":TT[i]>18?"Verë e ngrohtë dhe më e thatë.":"Stinë kalimtare, me reshje të shpeshta.")}
+function cm(i){mi=i;draw()}
+document.querySelectorAll(".tabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs .tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");mode=b.dataset.m;draw()});
+draw();
+
+/* s5 altitude */
+const A=[[600,"Rrafshet","Klimë kontinentale e moderuar, stinët e dallueshme. Zona më e banuar dhe bujqësore.","#b9d0ff","#e8f0ff"],[1200,"Kodrat dhe malet e ulëta","Dimër më i gjatë, verë më e freskët. Pyje gjetherënëse dhe kullota.","#aef5d4","#e6fff3"],[2000,"Malet e larta","Dëborë për shumë muaj, pyje halorë dhe kullota verore.","#ffe58a","#fff6d0"],[3000,"Bjeshkët alpine","Klimë alpine: erë, ftohtësi dhe dëborë të gjatë. Në majat më të larta ngrica mund të ndodhë edhe në verë.","#ffc2d8","#ffe8f1"]];
+function setAlt(){const v=+$("alt").value,z=A.find(z=>v<=z[0]);$("sky").style.background="linear-gradient(180deg,"+z[3]+","+z[4]+")";$("lvl").style.bottom=((v-300)/2350*88+4)+"%";$("lvv").textContent=v.toLocaleString("sq")+" m";const t=Math.round((11-0.6*(v-500)/100)*10)/10;$("aout").innerHTML="<b>"+z[1]+":</b> "+z[2]+"<br>Temperatura mesatare vjetore e përafërt: <b>"+String(t).replace(".",",")+"°C</b>"}
+$("alt").oninput=setAlt;setAlt();
+
+/* s6 impact */
+const I=[["🌾","Bujqësia","Verë e ngrohtë dhe reshje të mjaftueshme favorizojnë grurin, misrin dhe pemishtet. Dukagjini ka sezon më të gjatë, përfshirë rrushin."],["❄️","Dimri dhe turizmi","Dëbora në Sharr dhe Bjeshkët e Nemura mundëson skijimin dhe turizmin dimëror."],["💧","Ujërat","Dëbora e maleve shkrihet në pranverë dhe i ushqen lumenjtë. Vera e thatë mund ta ulë nivelin e tyre."],["🔥","Nxehtësia dhe thatësira","Vera e ngrohtë dhe valët e të nxehtit rrisin rrezikun e thatësirës dhe zjarreve në pyje."]];
+$("imp").innerHTML=I.map((x,i)=>`<button class="card" onclick="ii(${i},this)"><span class="ic">${x[0]}</span><h3>${x[1]}</h3></button>`).join("");
+function ii(i,b){pick("#imp .card",i,b);$("iout").innerHTML="<b>"+I[i][1]+":</b> "+I[i][2]}
+ii(0,$("imp").children[0]);
+
+/* s7 quiz */
+const Q=[["Çfarë klime ka kryesisht Kosova?",["Tropikale","Polare","Kontinentale","Shkretëtirë"],2],["Cila zonë ka ndikim më të theksuar mesdhetar?",["Rrafshi i Dukagjinit","Kopaoniku","Gollaku","Sharri"],0],["Sa bie temperatura përafërsisht për 100 m lartësi?",["0,6°C","6°C","0,06°C","10°C"],0],["Cili muaj është zakonisht më i ftohti në Prishtinë?",["Mars","Janar","Tetor","Qershor"],1],["Cili tip klime ka në Bjeshkët e Nemura?",["Alpine","Mesdhetare","Tropikale","Stepë"],0],["Nga e merr ajrin më të butë Kosova perëndimore?",["Nga Deti i Zi","Nga Baltiku","Nga Adriatiku","Nga Sahara"],2]];
+let qs=0,qi=0,pts=0;
+function quiz(){qs=1;qi=0;pts=0;sq()}
+function sq(){const q=Q[qi];$("qn").textContent="Pyetja "+(qi+1)+" nga "+Q.length;$("qq").textContent=q[0];$("qf").textContent="";$("qo").innerHTML=q[1].map((o,i)=>`<button class="qo" onclick="an(${i})">${o}</button>`).join("")}
+function an(i){const q=Q[qi],bs=document.querySelectorAll(".qo");bs.forEach((b,k)=>{b.disabled=true;if(k===q[2])b.classList.add("ok")});if(i===q[2]){pts++;$("qf").textContent="Saktë! ✅"}else{bs[i].classList.add("ng");$("qf").textContent="Jo ende. ❌"}
+setTimeout(()=>{qi++;if(qi<Q.length)sq();else{$("qn").textContent="Përfundoi";$("qq").textContent="Rezultati: "+pts+" / "+Q.length;$("qo").innerHTML='<button class="qo" onclick="quiz()">Provo përsëri</button>';$("qf").textContent=pts>=5?"Je ekspert i klimës! 🌟":"Përsërite pak dhe provo prapë."}},1100)}
+</script>
+</body>
+</html>
